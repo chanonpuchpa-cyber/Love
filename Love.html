@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Surprise for You ❤️</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+            font-family: 'Kanit', sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
+            border-radius: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            z-index: 10;
+            max-width: 350px;
+            width: 90%;
+        }
+
+        h1 { color: #d32f2f; margin-bottom: 20px; font-size: 1.8rem; }
+
+        .img-display {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 5px solid #ff4081;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #yesBtn { background-color: #ff4081; color: white; font-weight: bold; }
+        #noBtn { background-color: #f0f0f0; color: #555; position: relative; }
+
+        .heart-particle {
+            position: absolute;
+            color: #ff4b2b;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall { to { transform: translateY(100vh); } }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainCard">
+        <img id="displayImg" class="img-display" src="kk.jpg" alt="Couple Image">
+        <h1 id="mainText">วาเลนไทน์นี้... ไปเดทกับเค้าไหม? ❤️</h1>
+        
+        <div class="btn-group">
+            <button id="yesBtn" onclick="celebrate()">ไปสิ!</button>
+            <button id="noBtn" onmouseover="handleNo()">ไม่ไป</button>
+        </div>
+    </div>
+
+    <script>
+        // รวมรูปที่คุณให้มา (สมมติว่าเป็น URL หรือจะใส่ชื่อไฟล์ถ้าคุณเก็บในโฟลเดอร์เดียวกัน)
+        // เพื่อความชัวร์ ผมใส่ placeholder ที่มีท่าทางคล้ายรูปของคุณไว้ก่อนนะครับ 
+        // คุณสามารถแก้ Link รูปใน [] นี้ได้เลย
+        const myPhotos = [
+            "kk.jpg",
+            "oo.jpg"
+        ];
+
+        // ตั้งรูปแรก
+        document.getElementById('displayImg').src = myPhotos[0];
+
+        let yesScale = 1;
+        const funnyTexts = ["จริงหรอ?", "คิดอีกทีน้าา", "เค้าเสียใจนะเนี่ย", "กดปุ่มชมพูเถอะ!", "ใจร้ายจัง!", "โอ๋ๆ กดตกลงนะ"];
+
+        function handleNo() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            const img = document.getElementById('displayImg');
+            const text = document.getElementById('mainText');
+
+            // 1. สุ่มรูปภาพใหม่ให้อ้อนๆ
+            img.src = myPhotos[Math.floor(Math.random() * myPhotos.length)];
+
+            // 2. เปลี่ยนข้อความ
+            text.innerText = funnyTexts[Math.floor(Math.random() * funnyTexts.length)];
+
+            // 3. ขยายปุ่ม Yes จนเต็มจอ!
+            yesScale += 0.4;
+            yesBtn.style.transform = `scale(${yesScale})`;
+
+            // 4. วาร์ปปุ่ม No หนี
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        function celebrate() {
+            const card = document.getElementById('mainCard');
+            card.innerHTML = `
+                <img class="img-display" src="${myPhotos[1]}">
+                <h1>เย้! รักที่สุดเลย ❤️</h1>
+                <p>เตรียมตัวรอรับเซอร์ไพรส์ได้เลย!</p>
+            `;
+
+            // เอฟเฟกต์พลุกระดาษ
+            const duration = 5 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4081', '#ffbdde'] });
+                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4081', '#ffbdde'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        // หัวใจร่วงพริ้วๆ
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.className = 'heart-particle';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-20px';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 4000);
+        }, 300);
+    </script>
+</body>
+</html>
